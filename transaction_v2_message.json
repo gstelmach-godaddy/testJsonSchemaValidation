@@ -1,173 +1,157 @@
 {
-  "schemaId": "urn:shared:eep:event:/serverevent/v1",
-  "data": [
-    {
-      "schemaId": "urn:shared:eep:event:/serverevent/v1",
-      "global": {
-        "eventId": "27e9515e-8b2b-4644-9af3-849763566696",
-        "traceId": "8fb31e84-eed0-4221-9819-cabac469588e",
-        "eventTime": "2023-11-17T22:11:31.311Z"
+  "type": "SALE",
+  "updatedAt": "2023-11-17T22:11:31Z",
+  "transactionId": "3b24b724-f4cb-49a1-9ecf-40628b857f31",
+  "transactionRefNum": "3b24b724-f4cb-49a1-9ecf-40628b857f31",
+  "storeId": "df555b6c-97f8-42de-8f4e-3f1a370f7989",
+  "fundingSource": {
+    "sourceType": "GOOGLE_PAY",
+    "cardDetail": {
+      "number": "411111******1111",
+      "numberHashed": "6DF7EBDFD475F7C9D6661E4EFF66672768C69F688BAE0B5A714F3F4ECB03E003",
+      "type": "VISA",
+      "source": "GOOGLE_PAY",
+      "expMonth": 12,
+      "expYear": 2025,
+      "encrypted": false,
+      "entryDetails": {
+        "entryMethod": "KEYED",
+        "customerPresent": false
       },
-      "event": {
-        "schemaId": "urn:shared:eep:event:/commerce/transaction.v1",
-        "data": {
-          "type": "SALE",
-          "updatedAt": "2023-11-17T22:11:31Z",
-          "transactionId": "3b24b724-f4cb-49a1-9ecf-40628b857f31",
-          "transactionRefNum": "3b24b724-f4cb-49a1-9ecf-40628b857f31",
-          "storeId": "df555b6c-97f8-42de-8f4e-3f1a370f7989",
-          "fundingSource": {
-            "sourceType": "GOOGLE_PAY",
-            "cardDetail": {
-              "number": "411111******1111",
-              "numberHashed": "6DF7EBDFD475F7C9D6661E4EFF66672768C69F688BAE0B5A714F3F4ECB03E003",
-              "type": "VISA",
-              "source": "GOOGLE_PAY",
-              "expMonth": 12,
-              "expYear": 2025,
-              "encrypted": false,
-              "entryDetails": {
-                "entryMethod": "KEYED",
-                "customerPresent": false
-              },
-              "interacMacDetail": {},
-              "legacyData": {
-                "status": "ACTIVE",
-                "cardBrand": {
-                  "createdAt": "2020-04-15T04:35:31Z",
-                  "displayName": "Visa",
-                  "id": "c74ab71f-9024-4de0-910d-54c6a9c2bbc5",
-                  "scheme": "VISA"
-                },
-                "cardHolderFullName": "Card Holder Name",
-                "cardId": "485019c6-c275-47d0-8598-cdc081e198d4",
-                "id": 36331656,
-                "numberFirst6": "411111",
-                "numberHashed": "6DF7EBDFD475F7C9D6661E4EFF66672768C69F688BAE0B5A714F3F4ECB03E003",
-                "numberLast4": "1111",
-                "type": "VISA"
-              }
-            }
-          },
-          "status": "COMPLETED",
-          "amount": {
-            "amountType": "DETAILED",
-            "total": 200,
-            "tip": {
-              "amount": 0,
-              "customerOptedNoTip": false
-            },
-            "cashback": 0,
-            "subTotal": 200,
-            "currency": "USD"
-          },
-          "createdAt": "2023-11-17T22:11:31Z",
-          "context": {
-            "channelId": "32bcca44-0ce1-40e4-b7a8-aad223751f46"
-          },
-          "clientContext": {
-            "sourceApp": "co.poynt.checkout",
-            "transmissionAtLocal": "2023-11-17T22:11:31Z",
-            "businessId": "39a4fbf1-1c0d-4061-ae9a-26cced6d08ed",
-            "source": "WEB",
-            "mcc": "5999",
-            "storeId": "df555b6c-97f8-42de-8f4e-3f1a370f7989",
-            "businessType": "TEST_MERCHANT",
-            "storeDeviceId": "urn:tid:e01f8868-d06e-30a2-93b7-c76261e1a98a",
-            "channelId": "32bcca44-0ce1-40e4-b7a8-aad223751f46"
-          },
-          "processorResponse": {
-            "processorType": "CREDIT_CARD",
-            "avsResult": {
-              "addressResult": "MATCH",
-              "postalCodeResult": "MATCH"
-            },
-            "approvalCode": "419763",
-            "approvedAmount": 200,
-            "legacyProcessorData": {
-              "acquirer": "POYNT",
-              "avsResult": {
-                "actualResult": "Y",
-                "addressResult": "MATCH",
-                "postalCodeResult": "MATCH"
-              },
-              "batchId": "1",
-              "processor": "MOCK",
-              "ps2000Data": "A6152054368866091410A",
-              "retrievalRefNum": "3b24b724-f4cb-49a1-9ecf-40628b857f31",
-              "status": "Successful",
-              "statusCode": "1",
-              "statusMessage": "Successful",
-              "transactionId": "3b24b724-f4cb-49a1-9ecf-40628b857f31"
-            }
-          },
-          "legacyMetadata": {
-            "context": {
-              "sourceApp": "co.poynt.checkout",
-              "transmissionAtLocal": "2023-11-17T22:11:31Z",
-              "businessId": "39a4fbf1-1c0d-4061-ae9a-26cced6d08ed",
-              "source": "WEB",
-              "mcc": "5999",
-              "storeId": "df555b6c-97f8-42de-8f4e-3f1a370f7989",
-              "businessType": "TEST_MERCHANT",
-              "storeDeviceId": "urn:tid:e01f8868-d06e-30a2-93b7-c76261e1a98a",
-              "channelId": "32bcca44-0ce1-40e4-b7a8-aad223751f46"
-            },
-            "customerUserId": 5788020,
-            "partialAuthEnabled": false,
-            "processorOptions": {
-              "processorToken": "0"
-            },
-            "receiptEmailAddress": "amagana.godaddy@gmail.com",
-            "references": [
-              {
-                "value": "2c106020-026d-49df-9d2e-0f9ac19cb55b",
-                "type": "CUSTOM",
-                "additionalLabel": "checkoutUrlId"
-              },
-              {
-                "value": "L",
-                "type": "CUSTOM",
-                "additionalLabel": "checkoutUrlType"
-              },
-              {
-                "value": "a281ee29-442b-4938-bdf3-80635b50eb48",
-                "type": "CUSTOM",
-                "additionalLabel": "POYNT_COLLECT"
-              },
-              {
-                "value": "9c17d78d-73b1-4c57-9693-6fa8cdd3bee7",
-                "type": "POYNT_ORDER"
-              }
-            ],
-            "saveCardOnFile": false,
-            "signatureCaptured": false,
-            "signatureRequired": false,
-            "status": "CAPTURED"
-          },
-          "references": [
-            {
-              "value": "2c106020-026d-49df-9d2e-0f9ac19cb55b",
-              "type": "CUSTOM",
-              "additionalLabel": "checkoutUrlId"
-            },
-            {
-              "value": "L",
-              "type": "CUSTOM",
-              "additionalLabel": "checkoutUrlType"
-            },
-            {
-              "value": "a281ee29-442b-4938-bdf3-80635b50eb48",
-              "type": "CUSTOM",
-              "additionalLabel": "POYNT_COLLECT"
-            },
-            {
-              "value": "9c17d78d-73b1-4c57-9693-6fa8cdd3bee7",
-              "type": "POYNT_ORDER"
-            }
-          ]
-        }
+      "interacMacDetail": {},
+      "legacyData": {
+        "status": "ACTIVE",
+        "cardBrand": {
+          "createdAt": "2020-04-15T04:35:31Z",
+          "displayName": "Visa",
+          "id": "c74ab71f-9024-4de0-910d-54c6a9c2bbc5",
+          "scheme": "VISA"
+        },
+        "cardHolderFullName": "Card Holder Name",
+        "cardId": "485019c6-c275-47d0-8598-cdc081e198d4",
+        "id": 36331656,
+        "numberFirst6": "411111",
+        "numberHashed": "6DF7EBDFD475F7C9D6661E4EFF66672768C69F688BAE0B5A714F3F4ECB03E003",
+        "numberLast4": "1111",
+        "type": "VISA"
       }
+    }
+  },
+  "status": "COMPLETED",
+  "amount": {
+    "amountType": "DETAILED",
+    "total": 200,
+    "tip": {
+      "amount": 0,
+      "customerOptedNoTip": false
+    },
+    "cashback": 0,
+    "subTotal": 200,
+    "currency": "USD"
+  },
+  "createdAt": "2023-11-17T22:11:31Z",
+  "context": {
+    "channelId": "32bcca44-0ce1-40e4-b7a8-aad223751f46"
+  },
+  "clientContext": {
+    "sourceApp": "co.poynt.checkout",
+    "transmissionAtLocal": "2023-11-17T22:11:31Z",
+    "businessId": "39a4fbf1-1c0d-4061-ae9a-26cced6d08ed",
+    "source": "WEB",
+    "mcc": "5999",
+    "storeId": "df555b6c-97f8-42de-8f4e-3f1a370f7989",
+    "businessType": "TEST_MERCHANT",
+    "storeDeviceId": "urn:tid:e01f8868-d06e-30a2-93b7-c76261e1a98a",
+    "channelId": "32bcca44-0ce1-40e4-b7a8-aad223751f46"
+  },
+  "processorResponse": {
+    "processorType": "CREDIT_CARD",
+    "avsResult": {
+      "addressResult": "MATCH",
+      "postalCodeResult": "MATCH"
+    },
+    "approvalCode": "419763",
+    "approvedAmount": 200,
+    "legacyProcessorData": {
+      "acquirer": "POYNT",
+      "avsResult": {
+        "actualResult": "Y",
+        "addressResult": "MATCH",
+        "postalCodeResult": "MATCH"
+      },
+      "batchId": "1",
+      "processor": "MOCK",
+      "ps2000Data": "A6152054368866091410A",
+      "retrievalRefNum": "3b24b724-f4cb-49a1-9ecf-40628b857f31",
+      "status": "Successful",
+      "statusCode": "1",
+      "statusMessage": "Successful",
+      "transactionId": "3b24b724-f4cb-49a1-9ecf-40628b857f31"
+    }
+  },
+  "legacyMetadata": {
+    "context": {
+      "sourceApp": "co.poynt.checkout",
+      "transmissionAtLocal": "2023-11-17T22:11:31Z",
+      "businessId": "39a4fbf1-1c0d-4061-ae9a-26cced6d08ed",
+      "source": "WEB",
+      "mcc": "5999",
+      "storeId": "df555b6c-97f8-42de-8f4e-3f1a370f7989",
+      "businessType": "TEST_MERCHANT",
+      "storeDeviceId": "urn:tid:e01f8868-d06e-30a2-93b7-c76261e1a98a",
+      "channelId": "32bcca44-0ce1-40e4-b7a8-aad223751f46"
+    },
+    "customerUserId": 5788020,
+    "partialAuthEnabled": false,
+    "processorOptions": {
+      "processorToken": "0"
+    },
+    "receiptEmailAddress": "amagana.godaddy@gmail.com",
+    "references": [
+      {
+        "value": "2c106020-026d-49df-9d2e-0f9ac19cb55b",
+        "type": "CUSTOM",
+        "additionalLabel": "checkoutUrlId"
+      },
+      {
+        "value": "L",
+        "type": "CUSTOM",
+        "additionalLabel": "checkoutUrlType"
+      },
+      {
+        "value": "a281ee29-442b-4938-bdf3-80635b50eb48",
+        "type": "CUSTOM",
+        "additionalLabel": "POYNT_COLLECT"
+      },
+      {
+        "value": "9c17d78d-73b1-4c57-9693-6fa8cdd3bee7",
+        "type": "POYNT_ORDER"
+      }
+    ],
+    "saveCardOnFile": false,
+    "signatureCaptured": false,
+    "signatureRequired": false,
+    "status": "CAPTURED"
+  },
+  "references": [
+    {
+      "value": "2c106020-026d-49df-9d2e-0f9ac19cb55b",
+      "type": "CUSTOM",
+      "additionalLabel": "checkoutUrlId"
+    },
+    {
+      "value": "L",
+      "type": "CUSTOM",
+      "additionalLabel": "checkoutUrlType"
+    },
+    {
+      "value": "a281ee29-442b-4938-bdf3-80635b50eb48",
+      "type": "CUSTOM",
+      "additionalLabel": "POYNT_COLLECT"
+    },
+    {
+      "value": "9c17d78d-73b1-4c57-9693-6fa8cdd3bee7",
+      "type": "POYNT_ORDER"
     }
   ]
 }
