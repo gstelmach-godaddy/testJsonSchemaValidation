@@ -1,0 +1,2275 @@
+{
+  "$id": "https://godaddy.com/schemas/commerce/transaction.v2",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Transaction",
+  "type": "object",
+  "description": "Transaction details",
+  "oneOf": [
+    {
+      "title": "Authorization Transaction",
+      "type": "object",
+      "x-generic-type": "Transaction",
+      "description": "Represents authorization transaction against a payment",
+      "properties": {
+        "captureBy": {
+          "type": "string",
+          "description": "Time by which the Authorization transaction should be captured (RFC 3339 format).",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Updated time in RFC 3339 format"
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "title": "Capture Transaction",
+      "type": "object",
+      "x-generic-type": "Transaction",
+      "description": "Represents capture transaction against a payment",
+      "properties": {
+        "parentTransactionId": {
+          "$ref": "#/properties/transactionId",
+          "description": "Parent transaction id"
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "title": "Refund Transaction",
+      "type": "object",
+      "x-generic-type": "Transaction",
+      "description": "Represents refund transaction against a payment",
+      "properties": {
+        "parentTransactionId": {
+          "$ref": "#/properties/transactionId",
+          "description": "Parent transaction id"
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "title": "Adjustment Transaction",
+      "type": "object",
+      "x-generic-type": "Transaction",
+      "description": "Represents Adjustment transaction against a payment",
+      "properties": {
+        "newAmount": {
+          "$ref": "#/properties/amount",
+          "description": "Adjusted transaction amount"
+        },
+        "parentTransactionId": {
+          "$ref": "#/properties/transactionId",
+          "description": "Parent transaction id"
+        }
+      },
+      "required": [
+        "newAmount"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "title": "Sale Transaction",
+      "type": "object",
+      "x-generic-type": "Transaction",
+      "description": "Represents sale transaction against a payment",
+      "properties": {
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Updated time in RFC 3339 format"
+        }
+      },
+      "additionalProperties": false
+    }
+  ],
+  "x-generic-type": "Transaction",
+  "properties": {
+    "type": {
+      "type": "string",
+      "description": "Discriminator field representing the type of Transaction"
+    },
+    "transactionId": {
+      "description": "Server generated identifier for this transaction",
+      "title": "Id",
+      "type": "string",
+      "pattern": "([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})|(urn:[a-z]{1,3}:[a-z]{1,3}:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})",
+      "x-custom-type": true,
+      "x-custom-id": true
+    },
+    "transactionRefNum": {
+      "title": "ReferenceNumber",
+      "description": "reference number (UUID format)",
+      "type": "string",
+      "format": "uuid",
+      "x-custom-type": true,
+      "x-custom-refnum": true
+    },
+    "storeId": {
+      "$ref": "#/properties/context/properties/channelId",
+      "description": "Store identifier for this transaction"
+    },
+    "fundingSource": {
+      "description": "Funding source",
+      "title": "Funding Source",
+      "type": "object",
+      "oneOf": [
+        {
+          "title": "Payment Card",
+          "type": "object",
+          "description": "Payment card",
+          "properties": {
+            "cardDetail": {
+              "description": "Card detail",
+              "title": "Card Detail",
+              "type": "object",
+              "properties": {
+                "number": {
+                  "type": "string",
+                  "description": "Card number"
+                },
+                "numberHashed": {
+                  "type": "string",
+                  "description": "Card number hashed"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "VISA",
+                    "MASTERCARD",
+                    "AMERICAN_EXPRESS",
+                    "DISCOVER",
+                    "INTERAC",
+                    "BANCOMAT",
+                    "MAESTRO",
+                    "DINERS_CLUB",
+                    "JCB",
+                    "UNIONPAY",
+                    "OTHER"
+                  ],
+                  "description": "Type of the card"
+                },
+                "source": {
+                  "type": "string",
+                  "description": "Source of the card",
+                  "enum": [
+                    "DIRECT",
+                    "PAZE",
+                    "APPLE_PAY",
+                    "GOOGLE_PAY"
+                  ]
+                },
+                "track1data": {
+                  "type": "string",
+                  "description": "In some use-cases (like airlines) Track1 is required.  Track1 contains some extra information over Track2 (like cardholder's name)."
+                },
+                "track2data": {
+                  "type": "string",
+                  "description": "Required for swiped transactions. Track2 read from the card contains PAN, expiration, etc."
+                },
+                "track3data": {
+                  "type": "string",
+                  "description": "Track3 for future use. Carries track from custom funding sources."
+                },
+                "firstName": {
+                  "type": "string",
+                  "description": "First name of card holder"
+                },
+                "lastName": {
+                  "type": "string",
+                  "description": "Last name of card holder"
+                },
+                "expMonth": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 12
+                },
+                "expYear": {
+                  "type": "integer",
+                  "minimum": 2000,
+                  "maximum": 9999
+                },
+                "sequenceNumber": {
+                  "type": "string",
+                  "description": "Sequence number to distinguish between 2 cards with same PAN."
+                },
+                "serviceCode": {
+                  "type": "string",
+                  "description": "Track data read from card"
+                },
+                "encrypted": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "True if the card number is encrypted"
+                },
+                "keySerialNumber": {
+                  "type": "string",
+                  "description": "For DUKPT encryption"
+                },
+                "entryDetails": {
+                  "description": "Card entry details",
+                  "title": "Card Entry Detail",
+                  "type": "object",
+                  "properties": {
+                    "iccFallback": {
+                      "type": "boolean",
+                      "description": "indicates whether there was a fallback to MSR from EMV",
+                      "default": false
+                    },
+                    "entryMethod": {
+                      "type": "string",
+                      "description": "Entry mode for the card",
+                      "enum": [
+                        "KEYED",
+                        "MSR",
+                        "CL_MSR",
+                        "ICC",
+                        "CL_ICC"
+                      ]
+                    },
+                    "customerPresent": {
+                      "type": "boolean",
+                      "description": "Indicates whether customer was present during transaction",
+                      "default": false
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "interacMacDetail": {
+                  "description": "Card Interacmac details",
+                  "title": "Interac Mac",
+                  "type": "object",
+                  "properties": {
+                    "interacMac": {
+                      "type": "string",
+                      "description": "Interac mac details for canada based cards"
+                    },
+                    "interacMacKSN": {
+                      "type": "string",
+                      "description": "Interac mac key serial number for canada based cards"
+                    }
+                  },
+                  "required": [
+                    "interacMac",
+                    "interacMacKSN"
+                  ],
+                  "additionalProperties": false
+                },
+                "emvTags": {
+                  "$ref": "#/properties/clientContext",
+                  "description": "Card EMV tags"
+                },
+                "currency": {
+                  "$ref": "#/properties/amount/oneOf/0/properties/currency",
+                  "description": "Card's native currency code, when available."
+                },
+                "legacyData": {
+                  "description": "Contains card details represented by legacy system",
+                  "type": "object",
+                  "$defs": {
+                    "LegacyCardAgreement": {
+                      "type": "object",
+                      "properties": {
+                        "agreedOn": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "Timestamp for when this agreement was agreed."
+                        },
+                        "businessId": {
+                          "type": "string",
+                          "description": "Business UUID that this card agreement belongs to."
+                        },
+                        "cardId": {
+                          "type": "string",
+                          "description": "Card UUID that this card agreement belongs to."
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "declinedOn": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "Timestamp for when this agreement was declined."
+                        },
+                        "email": {
+                          "type": "string",
+                          "description": "The customer email that we will send the agreement to."
+                        },
+                        "id": {
+                          "type": "string",
+                          "description": "UUID of the card agreement."
+                        },
+                        "metadata": {
+                          "$ref": "#/properties/fundingSource/oneOf/0/properties/cardDetail/properties/legacyData/$defs/LegacyCardAgreementMetadata",
+                          "description": "Card agreement metadata. Will hold the agreement template properties."
+                        },
+                        "status": {
+                          "type": "string",
+                          "description": "[Required] The type of card agreement status.",
+                          "enum": [
+                            "ACCEPTED",
+                            "DELETED",
+                            "INACTIVE"
+                          ]
+                        },
+                        "txnId": {
+                          "type": "string",
+                          "description": "Transaction UUID where this agreement is accepted."
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "version": {
+                          "type": "integer",
+                          "description": "The version of agreement."
+                        }
+                      },
+                      "description": "Object to keep track of card agreements for referenced transactions and recurring billing.",
+                      "additionalProperties": false
+                    },
+                    "LegacyCardAgreementMetadata": {
+                      "type": "object",
+                      "properties": {
+                        "businessContact": {
+                          "type": "string",
+                          "description": "Business contact or website.",
+                          "maxLength": 1024
+                        },
+                        "businessName": {
+                          "type": "string",
+                          "description": "Business name.",
+                          "maxLength": 128
+                        },
+                        "businessPhone": {
+                          "type": "string",
+                          "description": "Business phone.",
+                          "maxLength": 16
+                        },
+                        "countryCode": {
+                          "type": "string",
+                          "description": "Customer country code in ISO 3166-1 alpha-2 format, that was used to resolve template.",
+                          "maxLength": 2
+                        },
+                        "lang": {
+                          "type": "string",
+                          "description": "Language of agreement template in ISO 639-1 format, that was used to resolve template.",
+                          "maxLength": 2
+                        }
+                      },
+                      "description": "Object to represent card agreement metadata. Will hold the agreement template properties, language, country code etc.",
+                      "additionalProperties": false
+                    },
+                    "LegacyCardBrand": {
+                      "type": "object",
+                      "properties": {
+                        "brand": {
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "displayName": {
+                          "type": "string",
+                          "minLength": 3,
+                          "maxLength": 50
+                        },
+                        "id": {
+                          "type": "string"
+                        },
+                        "issuerBank": {
+                          "type": "string",
+                          "maxLength": 150
+                        },
+                        "logoUrl": {
+                          "type": "string"
+                        },
+                        "scheme": {
+                          "type": "string"
+                        }
+                      },
+                      "description": "This object represents CardBrand.",
+                      "additionalProperties": false
+                    },
+                    "LegacyCardKeyData": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "$ref": "#/properties/fundingSource/oneOf/0/properties/cardDetail/properties/legacyData/$defs/LegacyCardKey",
+                          "description": "The key identifier."
+                        },
+                        "version": {
+                          "type": "string",
+                          "description": "Version of the key.",
+                          "maxLength": 4
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "LegacyCardType": {
+                      "type": "string",
+                      "enum": [
+                        "AMERICAN_EXPRESS",
+                        "EBT",
+                        "BANCOMAT",
+                        "DISCOVER",
+                        "MAESTRO",
+                        "GOPAY",
+                        "DINERS_CLUB",
+                        "JCB",
+                        "ALIPAY",
+                        "MASTERCARD",
+                        "DANKORT",
+                        "OTHER",
+                        "PAYPAL",
+                        "INTERAC",
+                        "UNIONPAY",
+                        "VISA"
+                      ]
+                    },
+                    "LegacyCardKey": {
+                      "type": "string",
+                      "enum": [
+                        "WCK",
+                        "WAEK",
+                        "WMACK"
+                      ]
+                    }
+                  },
+                  "properties": {
+                    "cardAgreement": {
+                      "$ref": "#/properties/fundingSource/oneOf/0/properties/cardDetail/properties/legacyData/$defs/LegacyCardAgreement"
+                    },
+                    "status": {
+                      "type": "string",
+                      "description": "Status of the card.",
+                      "enum": [
+                        "ACTIVE",
+                        "REMOVED"
+                      ]
+                    },
+                    "cardBrand": {
+                      "$ref": "#/properties/fundingSource/oneOf/0/properties/cardDetail/properties/legacyData/$defs/LegacyCardBrand"
+                    },
+                    "cardHolderFullName": {
+                      "type": "string",
+                      "description": "Card holder's full name usually picked from track1.",
+                      "maxLength": 256
+                    },
+                    "cardId": {
+                      "type": "string",
+                      "description": "The uuid of the card created"
+                    },
+                    "encrypted": {
+                      "type": "boolean",
+                      "description": "True if track, PAN, expiration are encrypted."
+                    },
+                    "encryptedExpirationDate": {
+                      "type": "string",
+                      "description": "If encryption is true, a single encrypted expiration date (containing year, month and possibly date) is provided here."
+                    },
+                    "expirationDate": {
+                      "type": "integer",
+                      "description": "The date from expiration.  Date is typically only present in EMV cards."
+                    },
+                    "id": {
+                      "type": "integer",
+                      "description": "The id of the card created."
+                    },
+                    "issuer": {
+                      "type": "string"
+                    },
+                    "key": {
+                      "description": "List of keys and their versions being used.  If encrypted is true, only one of key and keySerialNumber can be populated (not both).",
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/properties/fundingSource/oneOf/0/properties/cardDetail/properties/legacyData/$defs/LegacyCardKeyData"
+                      }
+                    },
+                    "numberFirst6": {
+                      "type": "string",
+                      "description": "This is a response field. The first6 numbers of the PAN."
+                    },
+                    "numberHashed": {
+                      "type": "string"
+                    },
+                    "numberLast4": {
+                      "type": "string",
+                      "description": "This is a response field. The last4 numbers of the PAN."
+                    },
+                    "type": {
+                      "$ref": "#/properties/fundingSource/oneOf/0/properties/cardDetail/properties/legacyData/$defs/LegacyCardType",
+                      "description": "The network card belongs to: DISCOVER, VISA, MASTERCARD, AMEX, etc."
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "type",
+                "number",
+                "source"
+              ],
+              "additionalProperties": false
+            },
+            "cardVerificationData": {
+              "description": "Verification data that can be used to verify the customer information",
+              "title": "Verification Data",
+              "type": "object",
+              "oneOf": [
+                {
+                  "title": "Card Verification Data",
+                  "description": "Verification data for the card used as funding source",
+                  "type": "object",
+                  "properties": {
+                    "cardPin": {
+                      "type": "string",
+                      "description": "Card pin block."
+                    },
+                    "cardPinKeySerialNumber": {
+                      "type": "string",
+                      "description": "The acquirer's KeySerialNumber (KSN) corresponding to the pin-block"
+                    },
+                    "cvSkipReason": {
+                      "type": "string",
+                      "description": "CVV skipped because of this reason."
+                    },
+                    "cvData": {
+                      "type": "string",
+                      "description": "CVV information typically at the back of the card."
+                    },
+                    "cardHolderBillingAddress": {
+                      "$ref": "#/properties/fundingSource/oneOf/0/properties/cardVerificationData/oneOf/1/properties/billingAddress",
+                      "description": "Address for AVS"
+                    },
+                    "threeDSecureData": {
+                      "description": "3d secure data information",
+                      "type": "object",
+                      "properties": {
+                        "eci": {
+                          "type": "string"
+                        },
+                        "cryptogram": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "title": "Token Verification Data",
+                  "description": "Verification data for the token used as funding source",
+                  "type": "object",
+                  "properties": {
+                    "billingAddress": {
+                      "description": "Address for verification",
+                      "type": "object",
+                      "title": "Postal Address (Medium-Grained)",
+                      "properties": {
+                        "addressLine1": {
+                          "type": "string",
+                          "description": "The first line of the address. For example, number and street name. For example, `3032 Bunker Hill Lane`. Required for compliance and risk checks. Must contain the full address.",
+                          "maxLength": 300
+                        },
+                        "addressLine2": {
+                          "type": "string",
+                          "description": "The second line of the address. For example, office suite or apartment number.",
+                          "maxLength": 300
+                        },
+                        "addressLine3": {
+                          "type": "string",
+                          "description": "The third line of the address, if needed. For example, a street complement for Brazil; direction text, such as `next to Opera House`; or a landmark reference in an Indian address.",
+                          "maxLength": 100
+                        },
+                        "adminArea4": {
+                          "description": "The neighborhood, ward, or district. Smaller than `adminArea3` or `subLocality`. For example, the postal sorting code that is used in Guernsey and many French territories, such as French Guiana; the fine-grained administrative levels in China.",
+                          "type": "string",
+                          "maxLength": 100
+                        },
+                        "adminArea3": {
+                          "description": "A sub-locality, suburb, neighborhood, or district. Smaller than `adminArea2`. For example, in Brazil - Suburb, bairro, or neighborhood; in India - Sub-locality or district. Street name information may not always available and a sub-locality or district can reference a very small area.</li></ul>",
+                          "type": "string",
+                          "maxLength": 100
+                        },
+                        "adminArea2": {
+                          "description": "A city, town, or village. Smaller than `adminArea1`.",
+                          "type": "string",
+                          "maxLength": 300
+                        },
+                        "adminArea1": {
+                          "type": "string",
+                          "description": "The highest level sub-division in a country, which is usually a province, state, or ISO-3166-2 subdivision; formatted for postal delivery. For example, `CA` and not `California`. For example, for UK - A county; for USs - A state; for Canada - A province; for Japan - A prefecture; for Switzerland - A kanton.",
+                          "maxLength": 300
+                        },
+                        "postalCode": {
+                          "type": "string",
+                          "description": "The postal code, which is the zip code or equivalent. Typically required for countries that have a postal code or an equivalent. See [Postal code](https://en.wikipedia.org/wiki/Postal_code).",
+                          "maxLength": 60
+                        },
+                        "countryCode": {
+                          "description": "The [two-character ISO 3166-1 code](https://en.wikipedia.org/wiki/ISO_3166-1) that identifies the country or region. Note: The country code for Great Britain is `GB` and not `UK` as used in the top-level domain names for that country. Use country code `C2` for China for comparable uncontrolled price (CUP) method, bank-card, and cross-border transactions.",
+                          "type": "string",
+                          "maxLength": 2,
+                          "minLength": 2,
+                          "pattern": "^([A-Z]{2}|C2)$"
+                        },
+                        "addressDetails": {
+                          "type": "object",
+                          "title": "Address Details",
+                          "description": "The non-portable additional address details that are sometimes needed for compliance, risk, or other scenarios where fine-grain address information might be needed. Not portable with common third-party and open-source address libraries and redundant with core fields. For example, `address.addressLine1` is usually a combination of `addressDetails.streetNumber` and `streetName` and `streetType`.",
+                          "properties": {
+                            "streetNumber": {
+                              "description": "The street number.",
+                              "type": "string",
+                              "maxLength": 100
+                            },
+                            "streetName": {
+                              "description": "The street name. Just `Drury` in `Drury Lane`.",
+                              "type": "string",
+                              "maxLength": 100
+                            },
+                            "streetType": {
+                              "description": "The street type. For example, avenue, boulevard, road, or expressway.",
+                              "type": "string",
+                              "maxLength": 100
+                            },
+                            "deliveryService": {
+                              "description": "The delivery service. Post office box, bag number, or post office name.",
+                              "type": "string",
+                              "maxLength": 100
+                            },
+                            "buildingName": {
+                              "description": "A named locations that represents the premise. Usually a building name or number or collection of buildings with a common name or number. For example, <code>Craven House</code>.",
+                              "type": "string",
+                              "maxLength": 100
+                            },
+                            "subBuilding": {
+                              "description": "The first-order entity below a named building or location that represents the sub-premise. Usually a single building within a collection of buildings with a common name. Can be a flat, story, floor, room, or apartment.",
+                              "type": "string",
+                              "maxLength": 100
+                            },
+                            "addressType": {
+                              "description": "The type of address. Single character representation of a type. For example: 'B' for building, 'F' for organization, 'G' for general delivery, 'H' for high-rise, 'L' for large-volume organization, 'P' for Post Office box or delivery service, 'R' for rural route, 'S' for street, 'U' for unidentified address.",
+                              "type": "string",
+                              "maxLength": 1
+                            },
+                            "geoCoordinates": {
+                              "description": "The latitude and longitude of the address. For example, `37.42242` and `-122.08585`.",
+                              "type": "object",
+                              "title": "Geographic Coordinates",
+                              "properties": {
+                                "longitude": {
+                                  "type": "string",
+                                  "pattern": "^-?([1]?[1-7][1-9]|[1]?[1-8][0]|[1-9]?[0-9])\\.{1}\\d{1,6}"
+                                },
+                                "latitude": {
+                                  "type": "string",
+                                  "pattern": "^-?([1-8]?[1-9]|[1-9]0)\\.{1}\\d{1,6}"
+                                }
+                              },
+                              "required": [
+                                "longitude",
+                                "latitude"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "countryCode"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "description": "Discriminator type representing the type of verification data"
+                }
+              },
+              "required": [
+                "type"
+              ],
+              "additionalProperties": false
+            },
+            "processingInstruction": {
+              "description": "Processing instruction to use this funding source",
+              "title": "Card Processing Instruction",
+              "type": "object",
+              "properties": {
+                "signatureRequired": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "If signature is required for this transaction"
+                },
+                "debit": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "If card should be processed as debit or not"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "cardDetail"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "title": "EBT Card",
+          "type": "object",
+          "description": "EBT Card",
+          "properties": {
+            "cardDetail": {
+              "$ref": "#/properties/fundingSource/oneOf/0/properties/cardDetail",
+              "description": "Card detail"
+            },
+            "cardVerificationData": {
+              "$ref": "#/properties/fundingSource/oneOf/0/properties/cardVerificationData",
+              "description": "Card verification data"
+            },
+            "cardType": {
+              "type": "string",
+              "description": "Type of EBT card used",
+              "enum": [
+                "FOOD_STAMP",
+                "CASH_BENEFIT",
+                "ELECTRONIC_VOUCHER"
+              ]
+            },
+            "eVoucherSerial": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 15,
+              "description": "EVoucher serial if used with Electronic Voucher"
+            },
+            "eVoucherApprovalCode": {
+              "type": "string",
+              "minLength": 6,
+              "maxLength": 6,
+              "description": "EVoucher Approval code if used with Electronic Voucher"
+            }
+          },
+          "required": [
+            "cardDetail",
+            "cardType"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "title": "GoDaddy Payment Token",
+          "description": "GoDaddy Card-on-file Funding source",
+          "type": "object",
+          "allOf": [
+            {
+              "title": "Payment Token Funding Source",
+              "type": "object",
+              "description": "Payment Token Funding source",
+              "properties": {
+                "verificationData": {
+                  "$ref": "#/properties/fundingSource/oneOf/0/properties/cardVerificationData",
+                  "description": "Verification data"
+                }
+              },
+              "additionalProperties": false
+            }
+          ],
+          "properties": {
+            "token": {
+              "type": "string",
+              "description": "Godaddy Payment token"
+            },
+            "cardDetail": {
+              "$ref": "#/properties/fundingSource/oneOf/0/properties/cardDetail",
+              "description": "Card that was used with the Godaddy payment token"
+            }
+          },
+          "required": [
+            "token"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "title": "ApplePay Payment Token",
+          "type": "object",
+          "description": "ApplePay Funding source",
+          "allOf": [
+            {
+              "$ref": "#/properties/fundingSource/oneOf/2/allOf/0"
+            }
+          ],
+          "properties": {
+            "token": {
+              "type": "string",
+              "description": "Apple pay token"
+            },
+            "cardDetail": {
+              "$ref": "#/properties/fundingSource/oneOf/0/properties/cardDetail",
+              "description": "Card that was used with the Apple pay token"
+            }
+          },
+          "required": [
+            "token"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "title": "GooglePay Payment Token",
+          "description": "GooglePay Funding source",
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/properties/fundingSource/oneOf/2/allOf/0"
+            }
+          ],
+          "properties": {
+            "token": {
+              "type": "string",
+              "description": "Google pay token"
+            },
+            "cardDetail": {
+              "$ref": "#/properties/fundingSource/oneOf/0/properties/cardDetail",
+              "description": "Card that was used with the Google pay token"
+            }
+          },
+          "required": [
+            "token"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "title": "Paze payment Token",
+          "description": "Paze Funding source",
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/properties/fundingSource/oneOf/2/allOf/0"
+            }
+          ],
+          "properties": {
+            "token": {
+              "type": "string",
+              "description": "Paze payment token"
+            },
+            "cardDetail": {
+              "$ref": "#/properties/fundingSource/oneOf/0/properties/cardDetail",
+              "description": "Card that was used with the Paze payment token"
+            }
+          },
+          "required": [
+            "token"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "$defs": {
+            "BankAccountType": {
+              "type": "string",
+              "enum": [
+                "CHECKING",
+                "SAVINGS"
+              ]
+            }
+          },
+          "type": "object",
+          "properties": {
+            "accountNumber": {
+              "type": "string"
+            },
+            "accountNumberLastFour": {
+              "type": "string"
+            },
+            "accountType": {
+              "$ref": "#/properties/fundingSource/oneOf/6/$defs/BankAccountType",
+              "description": "Enum: CHECKING, SAVINGS."
+            },
+            "bankName": {
+              "type": "string"
+            },
+            "country": {
+              "type": "string"
+            },
+            "currency": {
+              "type": "string"
+            },
+            "ownerName": {
+              "type": "string",
+              "description": "The owner name of bank account."
+            },
+            "routingNumber": {
+              "type": "string"
+            }
+          },
+          "description": "This object represents BankAccount.",
+          "additionalProperties": false
+        },
+        {
+          "title": "Custom Funding source",
+          "description": "Funding source that can be processed using a specific provider and / or processor",
+          "type": "object",
+          "properties": {
+            "provider": {
+              "type": "string",
+              "description": "Provider that can handle the funding source",
+              "maxLength": 64
+            },
+            "processor": {
+              "type": "string",
+              "description": "Processor to be used for the funding source",
+              "maxLength": 64
+            },
+            "customFundingType": {
+              "type": "string",
+              "description": "Type of the custom funding source",
+              "maxLength": 64
+            },
+            "name": {
+              "type": "string",
+              "description": "Display name of the funding source",
+              "maxLength": 64
+            },
+            "description": {
+              "type": "string",
+              "description": "Description about the funding source",
+              "maxLength": 512
+            }
+          },
+          "required": [
+            "customFundingType",
+            "provider"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "title": "Cash Funding Source",
+          "type": "object",
+          "description": "Cash funding source",
+          "additionalProperties": false
+        }
+      ],
+      "properties": {
+        "sourceType": {
+          "type": "string",
+          "description": "Discriminator field representing the type of Funding source"
+        }
+      },
+      "required": [
+        "sourceType"
+      ],
+      "additionalProperties": false
+    },
+    "status": {
+      "title": "Transaction Status",
+      "type": "string",
+      "enum": [
+        "INITIATED",
+        "PENDING",
+        "FAILED",
+        "COMPLETED",
+        "VOIDED"
+      ],
+      "description": "Transaction status"
+    },
+    "amount": {
+      "description": "Transaction amount",
+      "title": "Amount",
+      "type": "object",
+      "oneOf": [
+        {
+          "title": "Simple Amount",
+          "type": "object",
+          "description": "Simple amount used for processing transaction",
+          "properties": {
+            "amount": {
+              "type": "integer",
+              "description": "Transaction amount",
+              "minimum": -9223372036854776000,
+              "maximum": 9223372036854776000
+            },
+            "currency": {
+              "description": "Transaction currency",
+              "title": "Currency",
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 3,
+              "x-custom-type": true,
+              "x-currency-type": true
+            }
+          },
+          "required": [
+            "amount",
+            "currency"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "title": "Detailed Amount",
+          "type": "object",
+          "description": "Itemized amount details used for processing transaction",
+          "properties": {
+            "total": {
+              "type": "integer",
+              "description": "Total amount",
+              "minimum": -9223372036854776000,
+              "maximum": 9223372036854776000
+            },
+            "tip": {
+              "description": "Tip amount details",
+              "title": "Tip Amount",
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "amount": {
+                  "type": "integer",
+                  "description": "Tip amount",
+                  "minimum": -9223372036854776000,
+                  "maximum": 9223372036854776000
+                },
+                "customerOptedNoTip": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Customer opted for no tip"
+                }
+              },
+              "additionalProperties": false
+            },
+            "cashback": {
+              "type": "integer",
+              "description": "Cashback details",
+              "minimum": -9223372036854776000,
+              "maximum": 9223372036854776000
+            },
+            "subTotal": {
+              "type": "integer",
+              "description": "Sub total details",
+              "minimum": -9223372036854776000,
+              "maximum": 9223372036854776000
+            },
+            "currency": {
+              "$ref": "#/properties/amount/oneOf/0/properties/currency",
+              "description": "Amount currency"
+            },
+            "fees": {
+              "type": "array",
+              "items": {
+                "title": "Fee",
+                "description": "Fee associated with transaction",
+                "type": "object",
+                "oneOf": [
+                  {
+                    "title": "Simple Fee",
+                    "type": "object",
+                    "description": "Simple fee associated with transaction",
+                    "properties": {
+                      "amount": {
+                        "type": "integer",
+                        "description": "Fee amount",
+                        "minimum": -9223372036854776000,
+                        "maximum": 9223372036854776000
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "Fee type",
+                        "minLength": 2,
+                        "maxLength": 64
+                      }
+                    },
+                    "required": [
+                      "amount",
+                      "type"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "title": "Governed Fee",
+                    "description": "Governed fee associated with transaction",
+                    "type": "object",
+                    "properties": {
+                      "amount": {
+                        "type": "integer",
+                        "description": "Fee amount",
+                        "minimum": -9223372036854776000,
+                        "maximum": 9223372036854776000
+                      },
+                      "programType": {
+                        "type": "string",
+                        "description": "Fee Program type",
+                        "enum": [
+                          "SURCHARGE",
+                          "SERVICE_FEE",
+                          "CONVENIENCE_FEE",
+                          "CASH_DISCOUNT"
+                        ]
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "How the fee should be appliedbinary",
+                        "enum": [
+                          "FIXED",
+                          "HYBRID",
+                          "PERCENTAGE"
+                        ]
+                      },
+                      "signature": {
+                        "type": "string",
+                        "maxLength": 256,
+                        "description": "Signature representing the Fee"
+                      }
+                    },
+                    "required": [
+                      "amount",
+                      "programType",
+                      "type",
+                      "signature"
+                    ],
+                    "additionalProperties": false
+                  }
+                ],
+                "properties": {
+                  "feeType": {
+                    "type": "string",
+                    "description": "Fee type discriminator"
+                  }
+                },
+                "required": [
+                  "feeType"
+                ],
+                "additionalProperties": false
+              },
+              "description": "Fees if any"
+            }
+          },
+          "required": [
+            "total",
+            "currency"
+          ],
+          "additionalProperties": false
+        }
+      ],
+      "properties": {
+        "amountType": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "amountType"
+      ],
+      "additionalProperties": false
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Created time in RFC 3339 format"
+    },
+    "context": {
+      "description": "Transaction context",
+      "title": "Transaction Context",
+      "type": "object",
+      "properties": {
+        "channelId": {
+          "title": "Uuid",
+          "description": "unique identifier (UUID format)",
+          "type": "string",
+          "format": "uuid"
+        },
+        "merchantInitiatedTransaction": {
+          "type": "boolean",
+          "default": false,
+          "description": "True if initiated by the Merchant on behalf of the customer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "clientContext": {
+      "description": "non-sensitive context data that can be stored and fetched by client when needed",
+      "title": "Dictionary",
+      "type": "object",
+      "minProperties": 0,
+      "maxProperties": 20,
+      "additionalProperties": false
+    },
+    "processorResponse": {
+      "description": "Processor response",
+      "title": "Processor Response",
+      "type": "object",
+      "oneOf": [
+        {
+          "title": "Card Processor Response",
+          "description": "Processor response for credit card",
+          "type": "object",
+          "properties": {
+            "avsResult": {
+              "description": "Address verifications result",
+              "title": "Address Verification Results",
+              "type": "object",
+              "properties": {
+                "addressResult": {
+                  "$ref": "#/properties/processorResponse/oneOf/0/properties/avsResult/properties/cityResult",
+                  "description": "Result of Address verification"
+                },
+                "cityResult": {
+                  "description": "Result of City verification",
+                  "title": "Address Verification Status",
+                  "type": "string",
+                  "enum": [
+                    "MATCH",
+                    "NO_MATCH",
+                    "PARTIAL_MATCH",
+                    "UNAVAILABLE"
+                  ]
+                },
+                "postalCodeResult": {
+                  "$ref": "#/properties/processorResponse/oneOf/0/properties/avsResult/properties/cityResult",
+                  "description": "Result of Postal code verification"
+                },
+                "stateResult": {
+                  "$ref": "#/properties/processorResponse/oneOf/0/properties/avsResult/properties/cityResult",
+                  "description": "Result of State verification"
+                },
+                "countryResult": {
+                  "$ref": "#/properties/processorResponse/oneOf/0/properties/avsResult/properties/cityResult",
+                  "description": "Result of Country verification"
+                },
+                "phoneResult": {
+                  "$ref": "#/properties/processorResponse/oneOf/0/properties/avsResult/properties/cityResult",
+                  "description": "Result of Phone verification"
+                },
+                "cardHolderNameResult": {
+                  "$ref": "#/properties/processorResponse/oneOf/0/properties/avsResult/properties/cityResult",
+                  "description": "Result of Card holder name verification"
+                }
+              },
+              "additionalProperties": false
+            },
+            "cvResult": {
+              "description": "CVV verification result",
+              "title": "CVV Verification result status",
+              "type": "string",
+              "enum": [
+                "MATCH",
+                "NO_MATCH",
+                "UNAVAILABLE"
+              ]
+            },
+            "approvalCode": {
+              "type": "string",
+              "description": "The approval code that came back from the acquirer (usually its 6 alpha-numeric characters).",
+              "maxLength": 32
+            },
+            "approvedAmount": {
+              "type": "integer",
+              "description": "The amount that the authorization was approved for.  This could be different from the transactionAmount requested.",
+              "minimum": -9223372036854776000,
+              "maximum": 9223372036854776000
+            },
+            "scaResult": {
+              "type": "string",
+              "description": "Represents a SCA status if it was triggered. Strong Customer Authentication (SCA) is a European regulatory requirement to reduce fraud and make online payments more secure."
+            },
+            "interacMacResult": {
+              "type": "string",
+              "description": "Interac mac result (if interacMac is used)"
+            },
+            "emvTags": {
+              "$ref": "#/properties/clientContext",
+              "description": "EMV tags obtained from the processor"
+            },
+            "legacyProcessorData": {
+              "description": "Process response data used by legacy system",
+              "x-legacy": true,
+              "$defs": {
+                "LegacyAVSResult": {
+                  "x-legacy": true,
+                  "type": "object",
+                  "properties": {
+                    "actualResult": {
+                      "type": "string"
+                    },
+                    "addressResult": {
+                      "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyAVSResultType"
+                    },
+                    "cardHolderNameResult": {
+                      "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyAVSResultType"
+                    },
+                    "cityResult": {
+                      "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyAVSResultType"
+                    },
+                    "countryResult": {
+                      "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyAVSResultType"
+                    },
+                    "phoneResult": {
+                      "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyAVSResultType"
+                    },
+                    "postalCodeResult": {
+                      "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyAVSResultType"
+                    },
+                    "stateResult": {
+                      "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyAVSResultType"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "LegacyAVSResultType": {
+                  "type": "string",
+                  "enum": [
+                    "MATCH",
+                    "NO_MATCH",
+                    "PARTIAL_MATCH",
+                    "NOT_PROVIDED",
+                    "ISSUER_NOT_CERTIFIED",
+                    "NO_RESPONSE_FROM_CARD_ASSOCIATION",
+                    "UNKNOWN_RESPONSE_FROM_CARD_ASSOCIATION",
+                    "NOT_VERIFIED",
+                    "BAD_FORMAT",
+                    "ERROR",
+                    "UNSUPPORTED_BY_ISSUER",
+                    "UNAVAILABLE",
+                    "ADDRESS_AND_ZIP_MATCH"
+                  ]
+                },
+                "LegacyCVResult": {
+                  "type": "string",
+                  "enum": [
+                    "MATCH",
+                    "NO_MATCH",
+                    "NOT_PROCESSED",
+                    "NO_CODE_PRESENT",
+                    "SHOULD_HAVE_BEEN_PRESENT",
+                    "ISSUER_NOT_CERTIFIED",
+                    "INVALID",
+                    "NO_RESPONSE",
+                    "NOT_APPLICABLE"
+                  ]
+                },
+                "LegacyECheckProcessor": {
+                  "type": "string",
+                  "enum": [
+                    "MOCK",
+                    "CHECK_COMMERCE"
+                  ]
+                },
+                "LegacyProcessor": {
+                  "type": "string",
+                  "enum": [
+                    "CHASE_PAYMENTECH",
+                    "REDE",
+                    "EVO",
+                    "FIRST_DATA",
+                    "GLOBAL_PAYMENTS",
+                    "HEARTLAND_PAYMENT_SYSTEM",
+                    "ELAVON",
+                    "MERCURY",
+                    "MONERIS",
+                    "PAYPAL",
+                    "ELAVON_MX",
+                    "STRIPE",
+                    "TSYS",
+                    "VANTIV",
+                    "WORLDPAY",
+                    "EPX",
+                    "WEPAY",
+                    "MASHREQ",
+                    "AXIS",
+                    "KARTUKU",
+                    "NEXI",
+                    "DANA",
+                    "MYNT",
+                    "POYNT",
+                    "NUVEI",
+                    "BRIDGEPAY",
+                    "CONVERGE",
+                    "MOCK",
+                    "NA_BANCARD",
+                    "CREDITCALL",
+                    "ELAVON_EU",
+                    "FUSEBOX",
+                    "SEAMLESS_PAYMENTS",
+                    "EVERTEC",
+                    "GHL",
+                    "RS2",
+                    "JCN",
+                    "PRISMA",
+                    "VANTIV_EXPRESS",
+                    "EZETAP",
+                    "ADYEN",
+                    "LETGO"
+                  ]
+                },
+                "LegacyProcessorStatus": {
+                  "type": "string",
+                  "enum": [
+                    "Successful",
+                    "Failure"
+                  ]
+                },
+                "LegacyProviderVerification": {
+                  "type": "object",
+                  "properties": {
+                    "publicKeyHash": {
+                      "type": "string",
+                      "description": "A hash of the public key so Poynt knows it has the right public key."
+                    },
+                    "signature": {
+                      "type": "string",
+                      "description": "Base64 encoded signature of the transactions."
+                    }
+                  },
+                  "description": "Provider verification fields.",
+                  "additionalProperties": false
+                },
+                "LegacyStrongCustomerAuthenticationResult": {
+                  "type": "string",
+                  "enum": [
+                    "ENTER_PIN",
+                    "INSERT_CARD",
+                    "CDCVM"
+                  ]
+                }
+              },
+              "type": "object",
+              "properties": {
+                "acquirer": {
+                  "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyProcessor"
+                },
+                "adapterId": {
+                  "type": "string"
+                },
+                "adapterVariant": {
+                  "type": "string"
+                },
+                "avsResult": {
+                  "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyAVSResult",
+                  "description": "The address verification results."
+                },
+                "batchAutoClosedByHost": {
+                  "type": "string"
+                },
+                "batchId": {
+                  "type": "string",
+                  "description": "The ID of the settlement batch that this transaction is assigned to.",
+                  "maxLength": 64
+                },
+                "cardToken": {
+                  "type": "string",
+                  "maxLength": 256
+                },
+                "cvActualResult": {
+                  "type": "string"
+                },
+                "cvResult": {
+                  "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyCVResult",
+                  "description": "The card verification results."
+                },
+                "debitResponseCode": {
+                  "type": "string"
+                },
+                "echeckProcessor": {
+                  "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyECheckProcessor",
+                  "description": "eCheck(electronic payment funded by the buyer's bank account) processor used by the business."
+                },
+                "issuerResponseCode": {
+                  "type": "string"
+                },
+                "pinSessionKey": {
+                  "type": "string"
+                },
+                "processedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Date / time of transaction received by the processor host."
+                },
+                "processor": {
+                  "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyProcessor"
+                },
+                "providerVerification": {
+                  "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyProviderVerification",
+                  "description": "Object that carries provider verification related fields."
+                },
+                "ps2000Data": {
+                  "type": "string",
+                  "description": "Payment Service 2000 data to process a secondary transaction"
+                },
+                "retrievalRefNum": {
+                  "type": "string",
+                  "maxLength": 64
+                },
+                "scaResult": {
+                  "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyStrongCustomerAuthenticationResult",
+                  "description": "Represents a SCA status if it was triggered. Strong Customer Authentication (SCA) is a European regulatory requirement to reduce fraud and make online payments more secure."
+                },
+                "status": {
+                  "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyProcessorStatus",
+                  "description": "Possible values are Successful or Failure.",
+                  "enum": [
+                    "Successful",
+                    "Failure"
+                  ]
+                },
+                "statusCode": {
+                  "type": "string",
+                  "description": "Will be 1 if status is Successful.  If status is Failure, it will be whatever statusCode came from the acquirer.",
+                  "maxLength": 64
+                },
+                "statusMessage": {
+                  "type": "string",
+                  "description": "Will be whatever message came back from the acquirer.",
+                  "maxLength": 512
+                },
+                "transactionId": {
+                  "type": "string",
+                  "description": "The transactionID that came back from the acquirer.",
+                  "maxLength": 64
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "title": "Debit Card Processor Response",
+          "description": "Processor response for debit card",
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/properties/processorResponse/oneOf/0"
+            }
+          ],
+          "properties": {
+            "remainingBalanceAmount": {
+              "type": "integer",
+              "description": "Remaining balance amount",
+              "minimum": -9223372036854776000,
+              "maximum": 9223372036854776000
+            },
+            "legacyProcessorData": {
+              "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData",
+              "description": "Process response data used by legacy system"
+            }
+          },
+          "additionalProperties": false
+        }
+      ],
+      "properties": {
+        "processorType": {
+          "type": "string",
+          "description": "Discriminator field representing the type of processor response"
+        }
+      },
+      "required": [
+        "processorType"
+      ],
+      "additionalProperties": false
+    },
+    "processingInstructions": {
+      "description": "Processing instructions to be used while processing transaction",
+      "title": "Transaction Processing Instruction",
+      "type": "object",
+      "properties": {
+        "authOnly": {
+          "type": "boolean",
+          "default": false,
+          "description": "Perform authorize only and do not auto capture. Applicable only for AUTHORIZATION type payment"
+        },
+        "partialAuthEnabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Allow partial authorizations. Applicable only for AUTHORIZATION and SALE type payment"
+        },
+        "statementDescriptorSuffix": {
+          "type": "string",
+          "description": "Transaction-level statement descriptor suffix. It's optional field. If parent transaction has data it will be used from parent transaction. If not provided then statement descriptor suffix from device/store/business level will be used."
+        }
+      },
+      "additionalProperties": false
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 512,
+      "description": "Notes about transaction"
+    },
+    "legacyMetadata": {
+      "description": "Transaction metadata represented by legacy system",
+      "type": "object",
+      "$defs": {
+        "LegacyAdjustmentRecord": {
+          "type": "object",
+          "properties": {
+            "amountChanges": {
+              "$ref": "#/properties/amount",
+              "description": "Total amount change in this adjustment."
+            },
+            "amounts": {
+              "$ref": "#/properties/amount",
+              "description": "Total amount after this adjustment."
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time",
+              "description": "This is a response field. The server time (in ISO-8601 format) at which this transaction was initially created. E.g. 2014-09-11T23:14:44Z."
+            },
+            "exchangeRate": {
+              "type": "object",
+              "properties": {
+                "businessId": {
+                  "type": "string"
+                },
+                "cardAmount": {
+                  "type": "integer"
+                },
+                "cardCurrency": {
+                  "type": "string",
+                  "minLength": 3,
+                  "maxLength": 3
+                },
+                "cardTipAmount": {
+                  "type": "integer"
+                },
+                "disclaimer": {
+                  "type": "string"
+                },
+                "markupInfo1": {
+                  "type": "string"
+                },
+                "markupInfo2": {
+                  "type": "string"
+                },
+                "markupPercentage": {
+                  "type": "string"
+                },
+                "provider": {
+                  "type": "string"
+                },
+                "rate": {
+                  "type": "integer"
+                },
+                "ratePrecision": {
+                  "type": "integer"
+                },
+                "requestedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "signature": {
+                  "type": "string"
+                },
+                "tipAmount": {
+                  "type": "integer"
+                },
+                "txnAmount": {
+                  "type": "integer"
+                },
+                "txnCurrency": {
+                  "type": "string",
+                  "minLength": 3,
+                  "maxLength": 3
+                }
+              },
+              "description": "Exchange rate used for this adjustment.",
+              "additionalProperties": false
+            },
+            "processorResponse": {
+              "$ref": "#/properties/processorResponse",
+              "description": "This object includes some important response elements received from the processor."
+            },
+            "reason": {
+              "properties": {
+                "program": {
+                  "type": "string",
+                  "enum": [
+                    "NO_SHOW",
+                    "PURCHASE",
+                    "CARD_DEPOSIT",
+                    "DELAYED_CHARGE",
+                    "EXPRESS_SERVICE",
+                    "ASSURED_RESERVATION"
+                  ],
+                  "description": "The reason for the transaction - currently only applicable for lodging."
+                },
+                "programFor": {
+                  "description": "Some programs require this additional programFor list to be populated.",
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "RESTAURANT",
+                      "GIFT_SHOP",
+                      "MINI_BAR",
+                      "TELEPHONE",
+                      "LAUNDRY",
+                      "OTHER"
+                    ]
+                  }
+                },
+                "description": "Reason for this adjustment."
+              }
+            },
+            "sequence": {
+              "type": "integer",
+              "description": "This field indicates the sequence in which this AdjustmentRecord happened in the adjustment history."
+            },
+            "signature": {
+              "type": "string"
+            },
+            "signatureCaptured": {
+              "type": "boolean",
+              "description": "Shows whether signature was captured for this adjustment."
+            },
+            "systemTraceAuditNumber": {
+              "type": "string"
+            },
+            "transactionNumber": {
+              "type": "string"
+            }
+          },
+          "description": "This object shows a summary of the adjustment.",
+          "additionalProperties": false
+        },
+        "LegacyPoyntLoyalty": {
+          "type": "object",
+          "properties": {
+            "externalId": {
+              "type": "string"
+            },
+            "loyalty": {
+              "type": "array",
+              "items": {
+                "$ref": "#/properties/legacyMetadata/$defs/LegacyPoyntLoyaltyCampaign"
+              }
+            },
+            "loyaltyId": {
+              "type": "integer"
+            },
+            "reward": {
+              "type": "array",
+              "items": {
+                "$ref": "#/properties/legacyMetadata/$defs/LegacyPoyntLoyaltyReward"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "LegacyPoyntLoyaltyCampaign": {
+          "type": "object",
+          "properties": {
+            "businessLoyaltyId": {
+              "type": "integer"
+            },
+            "campaignDescription": {
+              "type": "string"
+            },
+            "campaignName": {
+              "type": "string"
+            },
+            "lastIncrement": {
+              "type": "integer"
+            },
+            "loyaltyType": {
+              "type": "string"
+            },
+            "loyaltyUnit": {
+              "type": "string"
+            },
+            "nextTier": {
+              "type": "string"
+            },
+            "points": {
+              "type": "integer"
+            },
+            "pointsRequired": {
+              "type": "integer"
+            },
+            "rewardDescription": {
+              "type": "string"
+            },
+            "tier": {
+              "type": "string"
+            },
+            "totalPoints": {
+              "type": "integer"
+            },
+            "totalSpend": {
+              "type": "integer"
+            },
+            "totalVisits": {
+              "type": "integer"
+            }
+          },
+          "additionalProperties": false
+        },
+        "LegacyPoyntLoyaltyReward": {
+          "type": "object",
+          "properties": {
+            "businessLoyaltyId": {
+              "type": "integer"
+            },
+            "expireAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "newReward": {
+              "type": "boolean"
+            },
+            "postText": {
+              "type": "string"
+            },
+            "preText": {
+              "type": "string"
+            },
+            "rewardDescription": {
+              "type": "string"
+            },
+            "rewardId": {
+              "type": "integer"
+            },
+            "status": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "value": {
+              "type": "integer"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "properties": {
+        "actionVoid": {
+          "type": "boolean"
+        },
+        "adjusted": {
+          "type": "boolean",
+          "description": "This is a response only field.  This flag will be present on the transaction that was adjusted and its parents. Most processors only allow adjustment on an Authorize transaction, but some do allow adjustment on Sale or Capture too."
+        },
+        "adjustmentHistory": {
+          "description": "If the transaction has been adjusted (aka updated), this list will show the details of the updates.",
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/legacyMetadata/$defs/LegacyAdjustmentRecord"
+          }
+        },
+        "amountsAdjusted": {
+          "type": "boolean"
+        },
+        "approvalCode": {
+          "type": "string",
+          "description": "An approval code received over the phone (in case of terminal going offline) can be passed here as part of a SALE transaction.  This process in the industry is often referred to as forced post or forced sale.",
+          "maxLength": 32
+        },
+        "authOnly": {
+          "type": "boolean",
+          "description": "This is an in/out field. If not passed, it will default to false. This tells the terminal to only authorize and wait for the merchant to capture it."
+        },
+        "chargebackStatus": {
+          "type": "string",
+          "enum": [
+            "CREATED",
+            "DISPUTED",
+            "MERCHANT_WON",
+            "MERCHANT_LOST"
+          ]
+        },
+        "context": {
+          "$ref": "#/properties/clientContext",
+          "description": "[Required] Contains context about the transaction.  TransmissionAtLocal must be provided.  All other fields are optional."
+        },
+        "customerLanguage": {
+          "type": "string",
+          "description": "The customer's language preference for the transaction.",
+          "minLength": 2,
+          "maxLength": 2
+        },
+        "customerUserId": {
+          "type": "integer",
+          "description": "A Poynt generated customer id that is returned in the response.  This id is only assigned only to a customer performing a card transaction.",
+          "minimum": -9223372036854776000,
+          "maximum": 9223372036854776000
+        },
+        "emailReceipt": {
+          "type": "boolean"
+        },
+        "intent": {
+          "type": "string",
+          "description": "This field is used to inform the transaction intent. Client must use this field wherever applicable for better approval rate.",
+          "enum": [
+            "UNSCHEDULED_COF_TXN",
+            "RECURRING_COF_TXN",
+            "INSTALLMENT_COF_TXN"
+          ]
+        },
+        "partialAuthEnabled": {
+          "type": "boolean"
+        },
+        "partiallyApproved": {
+          "type": "boolean"
+        },
+        "paymentTokenUsed": {
+          "type": "boolean",
+          "description": "This means that transaction was processed with payment token."
+        },
+        "pinCaptured": {
+          "type": "boolean"
+        },
+        "poyntLoyalty": {
+          "$ref": "#/properties/legacyMetadata/$defs/LegacyPoyntLoyalty"
+        },
+        "processorOptions": {
+          "$ref": "#/properties/clientContext",
+          "description": "A name/value pair list that could be persisted and later retreived - primarily to store additional payment related data that get passed through to the processor."
+        },
+        "processorTransactionId": {
+          "type": "string",
+          "description": "The capability to enter a transaction id along with approval code.",
+          "maxLength": 64
+        },
+        "reason": {
+          "type": "object",
+          "properties": {
+            "program": {
+              "type": "string",
+              "enum": [
+                "NO_SHOW",
+                "PURCHASE",
+                "CARD_DEPOSIT",
+                "DELAYED_CHARGE",
+                "EXPRESS_SERVICE",
+                "ASSURED_RESERVATION"
+              ],
+              "description": "The reason for the transaction - currently only applicable for lodging."
+            },
+            "programFor": {
+              "description": "Some programs require this additional programFor list to be populated.",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "RESTAURANT",
+                  "GIFT_SHOP",
+                  "MINI_BAR",
+                  "TELEPHONE",
+                  "LAUNDRY",
+                  "OTHER"
+                ]
+              }
+            }
+          },
+          "description": "Reason for transaction - currently only applicable for lodging.",
+          "additionalProperties": false
+        },
+        "receiptEmailAddress": {
+          "type": "string",
+          "description": "Email address collected from the customer.",
+          "maxLength": 512
+        },
+        "receiptPhone": {
+          "type": "object",
+          "properties": {
+            "areaCode": {
+              "type": "string"
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "extensionNumber": {
+              "type": "string"
+            },
+            "id": {
+              "type": "integer",
+              "minimum": -9223372036854776000,
+              "maximum": 9223372036854776000
+            },
+            "ituCountryCode": {
+              "type": "string"
+            },
+            "localPhoneNumber": {
+              "type": "string"
+            },
+            "primaryDayTime": {
+              "type": "boolean"
+            },
+            "primaryEvening": {
+              "type": "boolean"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "ADDED",
+                "CONFIRMED"
+              ]
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "HOME",
+                "WORK",
+                "BUSINESS",
+                "MOBILE",
+                "FAX",
+                "PAGER",
+                "RECEIPT",
+                "OTHER"
+              ]
+            },
+            "updatedAt": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "description": "Phone collected from the customer to SMS receipt.",
+          "additionalProperties": false
+        },
+        "references": {
+          "description": "References to orders/invoices that this transaction is for.",
+          "type": "array",
+          "items": {
+            "$ref": "#/properties/references/items"
+          }
+        },
+        "reversalVoid": {
+          "type": "boolean"
+        },
+        "saveCardOnFile": {
+          "type": "boolean",
+          "description": "This boolean field is used to inform if user wants to save card on file with this transaction. Client must use this field wherever applicable for better approval rate."
+        },
+        "settled": {
+          "type": "boolean"
+        },
+        "settlementStatus": {
+          "type": "string",
+          "description": "Represents settlement status of transaction.",
+          "maxLength": 32
+        },
+        "shippingAddress": {
+          "type": "object",
+          "properties": {
+            "city": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "countryCode": {
+              "type": "string",
+              "maxLength": 3
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time",
+              "description": "The time (in ISO-8601 format) at which the address was created. E.g. 2014-09-11T23:14:44Z."
+            },
+            "id": {
+              "type": "integer",
+              "minimum": -9223372036854776000,
+              "maximum": 9223372036854776000
+            },
+            "line1": {
+              "type": "string",
+              "maxLength": 128
+            },
+            "line2": {
+              "type": "string",
+              "maxLength": 128
+            },
+            "postalCode": {
+              "type": "string",
+              "maxLength": 16
+            },
+            "postalCodeExtension": {
+              "type": "string",
+              "maxLength": 16
+            },
+            "primary": {
+              "type": "boolean"
+            },
+            "status": {
+              "type": "string",
+              "const": "ADDED"
+            },
+            "territory": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "territoryType": {
+              "type": "string",
+              "enum": [
+                "STATE",
+                "PROVINCE",
+                "OTHER"
+              ],
+              "description": "TerritoryType enum and territory go hand in hand. This enum specifies what kind of territory is in the territory field. E.g. in the US, this will typically be STATE."
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "HOME",
+                "WORK",
+                "BUSINESS",
+                "TRANSACTION",
+                "OTHER"
+              ]
+            },
+            "updatedAt": {
+              "type": "string",
+              "format": "date-time",
+              "description": "The time (in ISO-8601 format) at which the address was updated. E.g. 2014-09-11T23:14:44Z."
+            }
+          },
+          "description": "A shipping address associated with the transaction.",
+          "additionalProperties": false
+        },
+        "signature": {
+          "description": "Signature collected from the customer.",
+          "type": "string",
+          "pattern": "^[\\w\\d+\\/=]*$"
+        },
+        "signatureCaptured": {
+          "type": "boolean",
+          "description": "This is a response field. This field could be used by the client to inform that signature has or will soon be captured.  The server uses this field to inform whether a signature has been captured."
+        },
+        "signatureRequired": {
+          "type": "boolean"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "CREATED",
+            "SAVED",
+            "AUTHORIZED",
+            "PARTIALLY_CAPTURED",
+            "CAPTURED",
+            "DECLINED",
+            "PARTIALLY_CAPTURED_AND_PARTIALLY_REFUNDED",
+            "PARTIALLY_REFUNDED",
+            "REFUNDED",
+            "VOIDED",
+            "STEP_UP"
+          ],
+          "description": "If funding source is CASH, only CAPTURED and REFUNDED are the possible options.  The SAVE feature is not applicable to CASH."
+        },
+        "stayType": {
+          "type": "string",
+          "enum": [
+            "GENERAL_CONTAINER",
+            "REGULAR_STAY",
+            "QUICK_STAY",
+            "NON_LODGING_SALE",
+            "NON_LODGING_NRR"
+          ]
+        },
+        "systemTraceAuditNumber": {
+          "type": "string",
+          "description": "This is a unique number per transaction session generated by the terminal.",
+          "minLength": 1,
+          "maxLength": 6
+        },
+        "voided": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "references": {
+      "type": "array",
+      "items": {
+        "title": "Transaction Reference",
+        "type": "object",
+        "description": "Reference to a document (e.g. order or invoice) that this transaction  is for",
+        "properties": {
+          "value": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "type": {
+            "type": "string",
+            "maxLength": 32
+          },
+          "additionalLabel": {
+            "description": "(Optional) Label that the reference points to",
+            "type": "string",
+            "maxLength": 32
+          }
+        },
+        "required": [
+          "value",
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      "description": "References to the transaction"
+    },
+    "links": {
+      "type": "array",
+      "items": {
+        "title": "Link Description",
+        "type": "object",
+        "description": "A request-related [HATEOAS link](https://datatracker.ietf.org/doc/html/draft-handrews-json-schema-hyperschema-02).",
+        "properties": {
+          "href": {
+            "description": "The complete target URL, or link, to use in combination with the method to make the related call, as defined by [RFC 6570 - URI Template](https://tools.ietf.org/html/rfc6570), with the addition of the `$`, `(`, and `)` characters for pre-processing. The `href` is the key HATEOAS component that links a completed call with a subsequent call.",
+            "type": "string",
+            "format": "uri"
+          },
+          "rel": {
+            "description": "The [link relation type](https://tools.ietf.org/html/rfc5988#section-4), which is an identifier for a link that unambiguously describes the semantics of the link. For values, see [Link Relationship Types](https://www.iana.org/assignments/link-relations/link-relations.xhtml).",
+            "type": "string"
+          },
+          "title": {
+            "description": "The link title.",
+            "type": "string"
+          },
+          "targetMediaType": {
+            "description": "The [RFC 2046-defined media type](https://www.ietf.org/rfc/rfc2046.txt) that describes the link target.",
+            "type": "string"
+          },
+          "targetSchema": {
+            "description": "The schema that describes the link target.",
+            "type": "string",
+            "format": "uri"
+          },
+          "method": {
+            "description": "The method to use to request the link target. For example, for HTTP, this might be `GET` or `DELETE`.",
+            "type": "string"
+          },
+          "submissionMediaType": {
+            "description": "The media type with which to submit data with the request.",
+            "type": "string",
+            "default": "application/json"
+          },
+          "submissionSchema": {
+            "description": "The schema that describes the request data.",
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "rel",
+          "href"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Links associated with this transaction"
+    }
+  },
+  "required": [
+    "type",
+    "amount",
+    "createdAt"
+  ],
+  "additionalProperties": false
+}
