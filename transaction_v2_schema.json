@@ -1,10 +1,10 @@
 {
   "$id": "https://godaddy.com/schemas/commerce/transaction.v2",
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Transaction",
   "type": "object",
   "description": "Transaction details",
-  "oneOf": [
+  "anyOf": [
     {
       "title": "Authorization Transaction",
       "type": "object",
@@ -21,8 +21,7 @@
           "format": "date-time",
           "description": "Updated time in RFC 3339 format"
         }
-      },
-      "additionalProperties": false
+      }
     },
     {
       "title": "Capture Transaction",
@@ -34,8 +33,7 @@
           "$ref": "#/properties/transactionId",
           "description": "Parent transaction id"
         }
-      },
-      "additionalProperties": false
+      }
     },
     {
       "title": "Refund Transaction",
@@ -47,8 +45,7 @@
           "$ref": "#/properties/transactionId",
           "description": "Parent transaction id"
         }
-      },
-      "additionalProperties": false
+      }
     },
     {
       "title": "Adjustment Transaction",
@@ -67,8 +64,7 @@
       },
       "required": [
         "newAmount"
-      ],
-      "additionalProperties": false
+      ]
     },
     {
       "title": "Sale Transaction",
@@ -81,8 +77,7 @@
           "format": "date-time",
           "description": "Updated time in RFC 3339 format"
         }
-      },
-      "additionalProperties": false
+      }
     }
   ],
   "x-generic-type": "Transaction",
@@ -103,9 +98,11 @@
       "title": "ReferenceNumber",
       "description": "reference number (UUID format)",
       "type": "string",
-      "format": "uuid",
       "x-custom-type": true,
-      "x-custom-refnum": true
+      "x-custom-refnum": true,
+      "minLength": 36,
+      "maxLength": 36,
+      "pattern": "^[0-9a-zA-Z]{8}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{12}$"
     },
     "storeId": {
       "$ref": "#/properties/context/properties/channelId",
@@ -115,7 +112,7 @@
       "description": "Funding source",
       "title": "Funding Source",
       "type": "object",
-      "oneOf": [
+      "anyOf": [
         {
           "title": "Payment Card",
           "type": "object",
@@ -234,8 +231,7 @@
                       "description": "Indicates whether customer was present during transaction",
                       "default": false
                     }
-                  },
-                  "additionalProperties": false
+                  }
                 },
                 "interacMacDetail": {
                   "description": "Card Interacmac details",
@@ -254,15 +250,14 @@
                   "required": [
                     "interacMac",
                     "interacMacKSN"
-                  ],
-                  "additionalProperties": false
+                  ]
                 },
                 "emvTags": {
                   "$ref": "#/properties/clientContext",
                   "description": "Card EMV tags"
                 },
                 "currency": {
-                  "$ref": "#/properties/amount/oneOf/0/properties/currency",
+                  "$ref": "#/properties/amount/anyOf/0/properties/currency",
                   "description": "Card's native currency code, when available."
                 },
                 "legacyData": {
@@ -303,7 +298,7 @@
                           "description": "UUID of the card agreement."
                         },
                         "metadata": {
-                          "$ref": "#/properties/fundingSource/oneOf/0/properties/cardDetail/properties/legacyData/$defs/LegacyCardAgreementMetadata",
+                          "$ref": "#/properties/fundingSource/anyOf/0/properties/cardDetail/properties/legacyData/$defs/LegacyCardAgreementMetadata",
                           "description": "Card agreement metadata. Will hold the agreement template properties."
                         },
                         "status": {
@@ -328,8 +323,7 @@
                           "description": "The version of agreement."
                         }
                       },
-                      "description": "Object to keep track of card agreements for referenced transactions and recurring billing.",
-                      "additionalProperties": false
+                      "description": "Object to keep track of card agreements for referenced transactions and recurring billing."
                     },
                     "LegacyCardAgreementMetadata": {
                       "type": "object",
@@ -360,8 +354,7 @@
                           "maxLength": 2
                         }
                       },
-                      "description": "Object to represent card agreement metadata. Will hold the agreement template properties, language, country code etc.",
-                      "additionalProperties": false
+                      "description": "Object to represent card agreement metadata. Will hold the agreement template properties, language, country code etc."
                     },
                     "LegacyCardBrand": {
                       "type": "object",
@@ -392,14 +385,13 @@
                           "type": "string"
                         }
                       },
-                      "description": "This object represents CardBrand.",
-                      "additionalProperties": false
+                      "description": "This object represents CardBrand."
                     },
                     "LegacyCardKeyData": {
                       "type": "object",
                       "properties": {
                         "id": {
-                          "$ref": "#/properties/fundingSource/oneOf/0/properties/cardDetail/properties/legacyData/$defs/LegacyCardKey",
+                          "$ref": "#/properties/fundingSource/anyOf/0/properties/cardDetail/properties/legacyData/$defs/LegacyCardKey",
                           "description": "The key identifier."
                         },
                         "version": {
@@ -407,8 +399,7 @@
                           "description": "Version of the key.",
                           "maxLength": 4
                         }
-                      },
-                      "additionalProperties": false
+                      }
                     },
                     "LegacyCardType": {
                       "type": "string",
@@ -442,7 +433,7 @@
                   },
                   "properties": {
                     "cardAgreement": {
-                      "$ref": "#/properties/fundingSource/oneOf/0/properties/cardDetail/properties/legacyData/$defs/LegacyCardAgreement"
+                      "$ref": "#/properties/fundingSource/anyOf/0/properties/cardDetail/properties/legacyData/$defs/LegacyCardAgreement"
                     },
                     "status": {
                       "type": "string",
@@ -453,7 +444,7 @@
                       ]
                     },
                     "cardBrand": {
-                      "$ref": "#/properties/fundingSource/oneOf/0/properties/cardDetail/properties/legacyData/$defs/LegacyCardBrand"
+                      "$ref": "#/properties/fundingSource/anyOf/0/properties/cardDetail/properties/legacyData/$defs/LegacyCardBrand"
                     },
                     "cardHolderFullName": {
                       "type": "string",
@@ -487,7 +478,7 @@
                       "description": "List of keys and their versions being used.  If encrypted is true, only one of key and keySerialNumber can be populated (not both).",
                       "type": "array",
                       "items": {
-                        "$ref": "#/properties/fundingSource/oneOf/0/properties/cardDetail/properties/legacyData/$defs/LegacyCardKeyData"
+                        "$ref": "#/properties/fundingSource/anyOf/0/properties/cardDetail/properties/legacyData/$defs/LegacyCardKeyData"
                       }
                     },
                     "numberFirst6": {
@@ -502,25 +493,23 @@
                       "description": "This is a response field. The last4 numbers of the PAN."
                     },
                     "type": {
-                      "$ref": "#/properties/fundingSource/oneOf/0/properties/cardDetail/properties/legacyData/$defs/LegacyCardType",
+                      "$ref": "#/properties/fundingSource/anyOf/0/properties/cardDetail/properties/legacyData/$defs/LegacyCardType",
                       "description": "The network card belongs to: DISCOVER, VISA, MASTERCARD, AMEX, etc."
                     }
-                  },
-                  "additionalProperties": false
+                  }
                 }
               },
               "required": [
                 "type",
                 "number",
                 "source"
-              ],
-              "additionalProperties": false
+              ]
             },
             "cardVerificationData": {
               "description": "Verification data that can be used to verify the customer information",
               "title": "Verification Data",
               "type": "object",
-              "oneOf": [
+              "anyOf": [
                 {
                   "title": "Card Verification Data",
                   "description": "Verification data for the card used as funding source",
@@ -543,7 +532,7 @@
                       "description": "CVV information typically at the back of the card."
                     },
                     "cardHolderBillingAddress": {
-                      "$ref": "#/properties/fundingSource/oneOf/0/properties/cardVerificationData/oneOf/1/properties/billingAddress",
+                      "$ref": "#/properties/fundingSource/anyOf/0/properties/cardVerificationData/anyOf/1/properties/billingAddress",
                       "description": "Address for AVS"
                     },
                     "threeDSecureData": {
@@ -556,11 +545,9 @@
                         "cryptogram": {
                           "type": "string"
                         }
-                      },
-                      "additionalProperties": false
+                      }
                     }
-                  },
-                  "additionalProperties": false
+                  }
                 },
                 {
                   "title": "Token Verification Data",
@@ -676,20 +663,16 @@
                               "required": [
                                 "longitude",
                                 "latitude"
-                              ],
-                              "additionalProperties": false
+                              ]
                             }
-                          },
-                          "additionalProperties": false
+                          }
                         }
                       },
                       "required": [
                         "countryCode"
-                      ],
-                      "additionalProperties": false
+                      ]
                     }
-                  },
-                  "additionalProperties": false
+                  }
                 }
               ],
               "properties": {
@@ -700,8 +683,7 @@
               },
               "required": [
                 "type"
-              ],
-              "additionalProperties": false
+              ]
             },
             "processingInstruction": {
               "description": "Processing instruction to use this funding source",
@@ -718,14 +700,12 @@
                   "default": false,
                   "description": "If card should be processed as debit or not"
                 }
-              },
-              "additionalProperties": false
+              }
             }
           },
           "required": [
             "cardDetail"
-          ],
-          "additionalProperties": false
+          ]
         },
         {
           "title": "EBT Card",
@@ -733,11 +713,11 @@
           "description": "EBT Card",
           "properties": {
             "cardDetail": {
-              "$ref": "#/properties/fundingSource/oneOf/0/properties/cardDetail",
+              "$ref": "#/properties/fundingSource/anyOf/0/properties/cardDetail",
               "description": "Card detail"
             },
             "cardVerificationData": {
-              "$ref": "#/properties/fundingSource/oneOf/0/properties/cardVerificationData",
+              "$ref": "#/properties/fundingSource/anyOf/0/properties/cardVerificationData",
               "description": "Card verification data"
             },
             "cardType": {
@@ -765,8 +745,7 @@
           "required": [
             "cardDetail",
             "cardType"
-          ],
-          "additionalProperties": false
+          ]
         },
         {
           "title": "GoDaddy Payment Token",
@@ -779,11 +758,10 @@
               "description": "Payment Token Funding source",
               "properties": {
                 "verificationData": {
-                  "$ref": "#/properties/fundingSource/oneOf/0/properties/cardVerificationData",
+                  "$ref": "#/properties/fundingSource/anyOf/0/properties/cardVerificationData",
                   "description": "Verification data"
                 }
-              },
-              "additionalProperties": false
+              }
             }
           ],
           "properties": {
@@ -792,14 +770,13 @@
               "description": "Godaddy Payment token"
             },
             "cardDetail": {
-              "$ref": "#/properties/fundingSource/oneOf/0/properties/cardDetail",
+              "$ref": "#/properties/fundingSource/anyOf/0/properties/cardDetail",
               "description": "Card that was used with the Godaddy payment token"
             }
           },
           "required": [
             "token"
-          ],
-          "additionalProperties": false
+          ]
         },
         {
           "title": "ApplePay Payment Token",
@@ -807,7 +784,7 @@
           "description": "ApplePay Funding source",
           "allOf": [
             {
-              "$ref": "#/properties/fundingSource/oneOf/2/allOf/0"
+              "$ref": "#/properties/fundingSource/anyOf/2/allOf/0"
             }
           ],
           "properties": {
@@ -816,14 +793,13 @@
               "description": "Apple pay token"
             },
             "cardDetail": {
-              "$ref": "#/properties/fundingSource/oneOf/0/properties/cardDetail",
+              "$ref": "#/properties/fundingSource/anyOf/0/properties/cardDetail",
               "description": "Card that was used with the Apple pay token"
             }
           },
           "required": [
             "token"
-          ],
-          "additionalProperties": false
+          ]
         },
         {
           "title": "GooglePay Payment Token",
@@ -831,7 +807,7 @@
           "type": "object",
           "allOf": [
             {
-              "$ref": "#/properties/fundingSource/oneOf/2/allOf/0"
+              "$ref": "#/properties/fundingSource/anyOf/2/allOf/0"
             }
           ],
           "properties": {
@@ -840,14 +816,13 @@
               "description": "Google pay token"
             },
             "cardDetail": {
-              "$ref": "#/properties/fundingSource/oneOf/0/properties/cardDetail",
+              "$ref": "#/properties/fundingSource/anyOf/0/properties/cardDetail",
               "description": "Card that was used with the Google pay token"
             }
           },
           "required": [
             "token"
-          ],
-          "additionalProperties": false
+          ]
         },
         {
           "title": "Paze payment Token",
@@ -855,7 +830,7 @@
           "type": "object",
           "allOf": [
             {
-              "$ref": "#/properties/fundingSource/oneOf/2/allOf/0"
+              "$ref": "#/properties/fundingSource/anyOf/2/allOf/0"
             }
           ],
           "properties": {
@@ -864,14 +839,13 @@
               "description": "Paze payment token"
             },
             "cardDetail": {
-              "$ref": "#/properties/fundingSource/oneOf/0/properties/cardDetail",
+              "$ref": "#/properties/fundingSource/anyOf/0/properties/cardDetail",
               "description": "Card that was used with the Paze payment token"
             }
           },
           "required": [
             "token"
-          ],
-          "additionalProperties": false
+          ]
         },
         {
           "$defs": {
@@ -892,7 +866,7 @@
               "type": "string"
             },
             "accountType": {
-              "$ref": "#/properties/fundingSource/oneOf/6/$defs/BankAccountType",
+              "$ref": "#/properties/fundingSource/anyOf/6/$defs/BankAccountType",
               "description": "Enum: CHECKING, SAVINGS."
             },
             "bankName": {
@@ -912,8 +886,7 @@
               "type": "string"
             }
           },
-          "description": "This object represents BankAccount.",
-          "additionalProperties": false
+          "description": "This object represents BankAccount."
         },
         {
           "title": "Custom Funding source",
@@ -949,14 +922,12 @@
           "required": [
             "customFundingType",
             "provider"
-          ],
-          "additionalProperties": false
+          ]
         },
         {
           "title": "Cash Funding Source",
           "type": "object",
-          "description": "Cash funding source",
-          "additionalProperties": false
+          "description": "Cash funding source"
         }
       ],
       "properties": {
@@ -967,8 +938,7 @@
       },
       "required": [
         "sourceType"
-      ],
-      "additionalProperties": false
+      ]
     },
     "status": {
       "title": "Transaction Status",
@@ -986,7 +956,7 @@
       "description": "Transaction amount",
       "title": "Amount",
       "type": "object",
-      "oneOf": [
+      "anyOf": [
         {
           "title": "Simple Amount",
           "type": "object",
@@ -1011,8 +981,7 @@
           "required": [
             "amount",
             "currency"
-          ],
-          "additionalProperties": false
+          ]
         },
         {
           "title": "Detailed Amount",
@@ -1044,8 +1013,7 @@
                   "default": false,
                   "description": "Customer opted for no tip"
                 }
-              },
-              "additionalProperties": false
+              }
             },
             "cashback": {
               "type": "integer",
@@ -1060,7 +1028,7 @@
               "maximum": 9223372036854776000
             },
             "currency": {
-              "$ref": "#/properties/amount/oneOf/0/properties/currency",
+              "$ref": "#/properties/amount/anyOf/0/properties/currency",
               "description": "Amount currency"
             },
             "fees": {
@@ -1069,7 +1037,7 @@
                 "title": "Fee",
                 "description": "Fee associated with transaction",
                 "type": "object",
-                "oneOf": [
+                "anyOf": [
                   {
                     "title": "Simple Fee",
                     "type": "object",
@@ -1091,8 +1059,7 @@
                     "required": [
                       "amount",
                       "type"
-                    ],
-                    "additionalProperties": false
+                    ]
                   },
                   {
                     "title": "Governed Fee",
@@ -1135,8 +1102,7 @@
                       "programType",
                       "type",
                       "signature"
-                    ],
-                    "additionalProperties": false
+                    ]
                   }
                 ],
                 "properties": {
@@ -1147,8 +1113,7 @@
                 },
                 "required": [
                   "feeType"
-                ],
-                "additionalProperties": false
+                ]
               },
               "description": "Fees if any"
             }
@@ -1156,8 +1121,7 @@
           "required": [
             "total",
             "currency"
-          ],
-          "additionalProperties": false
+          ]
         }
       ],
       "properties": {
@@ -1167,8 +1131,7 @@
       },
       "required": [
         "amountType"
-      ],
-      "additionalProperties": false
+      ]
     },
     "createdAt": {
       "type": "string",
@@ -1184,7 +1147,9 @@
           "title": "Uuid",
           "description": "unique identifier (UUID format)",
           "type": "string",
-          "format": "uuid"
+          "minLength": 36,
+          "maxLength": 36,
+          "pattern": "^[0-9a-zA-Z]{8}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{12}$"
         },
         "merchantInitiatedTransaction": {
           "type": "boolean",
@@ -1200,13 +1165,16 @@
       "type": "object",
       "minProperties": 0,
       "maxProperties": 20,
-      "additionalProperties": false
+      "additionalProperties": {
+        "type": "string",
+        "maxLength": 256
+      }
     },
     "processorResponse": {
       "description": "Processor response",
       "title": "Processor Response",
       "type": "object",
-      "oneOf": [
+      "anyOf": [
         {
           "title": "Card Processor Response",
           "description": "Processor response for credit card",
@@ -1218,7 +1186,7 @@
               "type": "object",
               "properties": {
                 "addressResult": {
-                  "$ref": "#/properties/processorResponse/oneOf/0/properties/avsResult/properties/cityResult",
+                  "$ref": "#/properties/processorResponse/anyOf/0/properties/avsResult/properties/cityResult",
                   "description": "Result of Address verification"
                 },
                 "cityResult": {
@@ -1233,27 +1201,26 @@
                   ]
                 },
                 "postalCodeResult": {
-                  "$ref": "#/properties/processorResponse/oneOf/0/properties/avsResult/properties/cityResult",
+                  "$ref": "#/properties/processorResponse/anyOf/0/properties/avsResult/properties/cityResult",
                   "description": "Result of Postal code verification"
                 },
                 "stateResult": {
-                  "$ref": "#/properties/processorResponse/oneOf/0/properties/avsResult/properties/cityResult",
+                  "$ref": "#/properties/processorResponse/anyOf/0/properties/avsResult/properties/cityResult",
                   "description": "Result of State verification"
                 },
                 "countryResult": {
-                  "$ref": "#/properties/processorResponse/oneOf/0/properties/avsResult/properties/cityResult",
+                  "$ref": "#/properties/processorResponse/anyOf/0/properties/avsResult/properties/cityResult",
                   "description": "Result of Country verification"
                 },
                 "phoneResult": {
-                  "$ref": "#/properties/processorResponse/oneOf/0/properties/avsResult/properties/cityResult",
+                  "$ref": "#/properties/processorResponse/anyOf/0/properties/avsResult/properties/cityResult",
                   "description": "Result of Phone verification"
                 },
                 "cardHolderNameResult": {
-                  "$ref": "#/properties/processorResponse/oneOf/0/properties/avsResult/properties/cityResult",
+                  "$ref": "#/properties/processorResponse/anyOf/0/properties/avsResult/properties/cityResult",
                   "description": "Result of Card holder name verification"
                 }
-              },
-              "additionalProperties": false
+              }
             },
             "cvResult": {
               "description": "CVV verification result",
@@ -1300,28 +1267,27 @@
                       "type": "string"
                     },
                     "addressResult": {
-                      "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyAVSResultType"
+                      "$ref": "#/properties/processorResponse/anyOf/0/properties/legacyProcessorData/$defs/LegacyAVSResultType"
                     },
                     "cardHolderNameResult": {
-                      "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyAVSResultType"
+                      "$ref": "#/properties/processorResponse/anyOf/0/properties/legacyProcessorData/$defs/LegacyAVSResultType"
                     },
                     "cityResult": {
-                      "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyAVSResultType"
+                      "$ref": "#/properties/processorResponse/anyOf/0/properties/legacyProcessorData/$defs/LegacyAVSResultType"
                     },
                     "countryResult": {
-                      "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyAVSResultType"
+                      "$ref": "#/properties/processorResponse/anyOf/0/properties/legacyProcessorData/$defs/LegacyAVSResultType"
                     },
                     "phoneResult": {
-                      "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyAVSResultType"
+                      "$ref": "#/properties/processorResponse/anyOf/0/properties/legacyProcessorData/$defs/LegacyAVSResultType"
                     },
                     "postalCodeResult": {
-                      "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyAVSResultType"
+                      "$ref": "#/properties/processorResponse/anyOf/0/properties/legacyProcessorData/$defs/LegacyAVSResultType"
                     },
                     "stateResult": {
-                      "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyAVSResultType"
+                      "$ref": "#/properties/processorResponse/anyOf/0/properties/legacyProcessorData/$defs/LegacyAVSResultType"
                     }
-                  },
-                  "additionalProperties": false
+                  }
                 },
                 "LegacyAVSResultType": {
                   "type": "string",
@@ -1428,8 +1394,7 @@
                       "description": "Base64 encoded signature of the transactions."
                     }
                   },
-                  "description": "Provider verification fields.",
-                  "additionalProperties": false
+                  "description": "Provider verification fields."
                 },
                 "LegacyStrongCustomerAuthenticationResult": {
                   "type": "string",
@@ -1443,7 +1408,7 @@
               "type": "object",
               "properties": {
                 "acquirer": {
-                  "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyProcessor"
+                  "$ref": "#/properties/processorResponse/anyOf/0/properties/legacyProcessorData/$defs/LegacyProcessor"
                 },
                 "adapterId": {
                   "type": "string"
@@ -1452,7 +1417,7 @@
                   "type": "string"
                 },
                 "avsResult": {
-                  "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyAVSResult",
+                  "$ref": "#/properties/processorResponse/anyOf/0/properties/legacyProcessorData/$defs/LegacyAVSResult",
                   "description": "The address verification results."
                 },
                 "batchAutoClosedByHost": {
@@ -1471,14 +1436,14 @@
                   "type": "string"
                 },
                 "cvResult": {
-                  "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyCVResult",
+                  "$ref": "#/properties/processorResponse/anyOf/0/properties/legacyProcessorData/$defs/LegacyCVResult",
                   "description": "The card verification results."
                 },
                 "debitResponseCode": {
                   "type": "string"
                 },
                 "echeckProcessor": {
-                  "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyECheckProcessor",
+                  "$ref": "#/properties/processorResponse/anyOf/0/properties/legacyProcessorData/$defs/LegacyECheckProcessor",
                   "description": "eCheck(electronic payment funded by the buyer's bank account) processor used by the business."
                 },
                 "issuerResponseCode": {
@@ -1493,10 +1458,10 @@
                   "description": "Date / time of transaction received by the processor host."
                 },
                 "processor": {
-                  "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyProcessor"
+                  "$ref": "#/properties/processorResponse/anyOf/0/properties/legacyProcessorData/$defs/LegacyProcessor"
                 },
                 "providerVerification": {
-                  "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyProviderVerification",
+                  "$ref": "#/properties/processorResponse/anyOf/0/properties/legacyProcessorData/$defs/LegacyProviderVerification",
                   "description": "Object that carries provider verification related fields."
                 },
                 "ps2000Data": {
@@ -1508,11 +1473,11 @@
                   "maxLength": 64
                 },
                 "scaResult": {
-                  "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyStrongCustomerAuthenticationResult",
+                  "$ref": "#/properties/processorResponse/anyOf/0/properties/legacyProcessorData/$defs/LegacyStrongCustomerAuthenticationResult",
                   "description": "Represents a SCA status if it was triggered. Strong Customer Authentication (SCA) is a European regulatory requirement to reduce fraud and make online payments more secure."
                 },
                 "status": {
-                  "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData/$defs/LegacyProcessorStatus",
+                  "$ref": "#/properties/processorResponse/anyOf/0/properties/legacyProcessorData/$defs/LegacyProcessorStatus",
                   "description": "Possible values are Successful or Failure.",
                   "enum": [
                     "Successful",
@@ -1534,11 +1499,9 @@
                   "description": "The transactionID that came back from the acquirer.",
                   "maxLength": 64
                 }
-              },
-              "additionalProperties": false
+              }
             }
-          },
-          "additionalProperties": false
+          }
         },
         {
           "title": "Debit Card Processor Response",
@@ -1546,7 +1509,7 @@
           "type": "object",
           "allOf": [
             {
-              "$ref": "#/properties/processorResponse/oneOf/0"
+              "$ref": "#/properties/processorResponse/anyOf/0"
             }
           ],
           "properties": {
@@ -1557,11 +1520,10 @@
               "maximum": 9223372036854776000
             },
             "legacyProcessorData": {
-              "$ref": "#/properties/processorResponse/oneOf/0/properties/legacyProcessorData",
+              "$ref": "#/properties/processorResponse/anyOf/0/properties/legacyProcessorData",
               "description": "Process response data used by legacy system"
             }
-          },
-          "additionalProperties": false
+          }
         }
       ],
       "properties": {
@@ -1572,8 +1534,7 @@
       },
       "required": [
         "processorType"
-      ],
-      "additionalProperties": false
+      ]
     },
     "processingInstructions": {
       "description": "Processing instructions to be used while processing transaction",
@@ -1687,6 +1648,8 @@
               "description": "This object includes some important response elements received from the processor."
             },
             "reason": {
+              "type": "object",
+              "description": "Reason for this adjustment.",
               "properties": {
                 "program": {
                   "type": "string",
@@ -1714,9 +1677,9 @@
                       "OTHER"
                     ]
                   }
-                },
-                "description": "Reason for this adjustment."
-              }
+                }
+              },
+              "additionalProperties": false
             },
             "sequence": {
               "type": "integer",
@@ -2270,6 +2233,5 @@
     "type",
     "amount",
     "createdAt"
-  ],
-  "additionalProperties": false
+  ]
 }

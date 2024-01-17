@@ -1,5 +1,6 @@
 import json
 import fastjsonschema
+import jsonschema
 
 
 if __name__ == '__main__':
@@ -11,6 +12,8 @@ if __name__ == '__main__':
         message = json.load(read_message_file)
 
     validator = fastjsonschema.compile(schema)
-    validator(message)
+    a = validator(message)
+    print(validator)
+    print("\nValid!!")
 
 
