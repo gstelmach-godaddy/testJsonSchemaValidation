@@ -1,8 +1,8 @@
 
 import fastjsonschema
 
-sub_schemas = { "urn:shared:definitions.randomNumber": {"type": "integer"},
-                "urn:shared:definitions.randomObject": {"$schema": "http://json-schema.org/draft-07/schema#", "type": "object", "properties": {"randomName": {"type": "string"}}, "required": ["randomName"]},
+sub_schemas = { "urn:shared:definitions.IntNumber": {"type": "integer"},
+                "urn:shared:definitions.Address": {"$schema": "http://json-schema.org/draft-07/schema#", "type": "object", "properties": {"street1": {"type": "string"}, "city": {"type": "string"}}, "required": ["street1", "city"]},
               }
 def customer_ref_handler(ref: str):
     return sub_schemas[ref]
@@ -17,8 +17,8 @@ schema = {
                 "type": "array",
                 "items": {"type": "string"}
             },
-            "aNumber": {"$ref": "urn:shared:definitions.randomNumber"},
-            "anObject": {"$ref": "urn:shared:definitions.randomObject"}
+            "aNumber": {"$ref": "urn:shared:definitions.IntNumber"},
+            "address": {"$ref": "urn:shared:definitions.Address"}
         },
         "required": ["name", "age", "aNumber"],
         "definitions": {
@@ -34,7 +34,10 @@ message = {
             "+44 2345678"
         ],
         "aNumber": 2,
-        "anObject": {"randomName": "John Doe"}
+        "address": {
+            "street1": "123 Main St.",
+            "city": "Katmandu"
+        }
 
     }
 
